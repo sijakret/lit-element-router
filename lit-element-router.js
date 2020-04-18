@@ -35,12 +35,24 @@ export function router(base) {
             localCallback && localCallback(name, params, query, data);
             callback(name, params, query, data);
         }
+        
+        // override to 
+        get location() {
+            return {
+                get pathname() {
+                    return window.location.pathname;
+                },
+                get search() {
+                    return window.location.search;
+                }
+            }
+        }
 
         routing(routes, callback) {
             this.canceled = true;
 
-            const uri = decodeURI(window.location.pathname);
-            const querystring = decodeURI(window.location.search);
+            const uri = decodeURI(this.location.pathname);
+            const querystring = decodeURI(this.location.search);
 
             let notFoundRoute = routes.filter(route => route.pattern === '*')[0];
             let activeRoute = routes.filter(route => route.pattern !== '*' && testRoute(uri, route.pattern))[0];
